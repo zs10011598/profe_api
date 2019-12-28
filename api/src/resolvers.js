@@ -1,7 +1,9 @@
 const Sequelize = require('sequelize');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+
 const { Profe } = require('./datasources/index.js');
 
-const debug = require('debug');
 
 const resolvers = {
   
@@ -9,10 +11,20 @@ const resolvers = {
     
     profeById: async (parent, { id }, context) => {
 
-    	return Profe.find({
-    					where: {id: id}, 
-    					attributes: ['id', 'nombre', 'apellidoPaterno', 'apellidoMaterno', 'email', 'password']
-    				});
+      return Profe.findOne({
+              where: {id: id}, 
+              attributes: ['id', 'nombre', 'apellidoPaterno', 'apellidoMaterno', 'email', 'password']
+            });
+
+    },
+
+    currentProfe: (parent, args, { profe }, context) => {
+      
+      if (!profe) {
+        console.log('Not Authenticated');
+        throw new Error('Not Authenticated')
+      }
+      return Profe.findOne({ where: { id: profe.id }});
 
     },
   
@@ -33,7 +45,7 @@ const resolvers = {
         
         message = 'No se pudo insertar el usuario, el email ya existe!';
         
-        debug(message);
+        console.log(message);
 
         resgister_profe_response['profe'] = null;
         resgister_profe_response['error'] = true;
@@ -42,11 +54,14 @@ const resolvers = {
 
       } else {
         
+
+        const hashed_password = await bcrypt.hash(password, 10);
+
         const new_profe = Profe.build({nombre: nombre, 
                                        apellidoPaterno: apellidoPaterno,
                                        apellidoMaterno: apellidoMaterno,
                                        email: email,
-                                       password: password});
+                                       password: hashed_password});
 
         return new_profe.save().then(profe => {
           
@@ -60,7 +75,7 @@ const resolvers = {
           
           message = 'Ocurrio un error al insertar el usuario! ' + error;
 
-          debug(error);
+          console.log(error);
 
           resgister_profe_response['profe'] = null;
           resgister_profe_response['error'] = true;
@@ -74,7 +89,56 @@ const resolvers = {
 
  
 
-    }
+    },
+
+    login: async (parent, { email, password }, context, info) => {
+      
+      const profe = await Profe.findOne({
+        where: { email: email }
+      });
+
+      var password_match = false;
+      var logged_in = false;
+      var token = '';
+
+      if (!profe) {
+        
+        console.log('Login invalido!');
+      
+      } else {
+
+        password_match = await bcrypt.compare(password, profe.password);
+        logged_in = true;
+        token = jwt.sign(
+          {
+            id: profe.id,
+            username: profe.email,
+          },
+          `${process.env.SECRET}`,
+          {
+            expiresIn: '1d',
+          },
+        );
+        
+      }
+
+      if (!password_match) {
+        
+        console.log('Login invalido!');
+        logged_in = false;
+        token = '';
+
+      }
+
+      return {
+        
+        profe: profe,
+        token: token,
+        loggedIn: logged_in,
+      
+      };
+
+    },
 
   }
 

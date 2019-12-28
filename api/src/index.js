@@ -1,23 +1,43 @@
-const debug = require('debug');
-const { ApolloServer } = require('apollo-server');
-const { buildFederatedSchema } = require('@apollo/federation');
 const typeDefs = require('./schema');
 const resolvers = require('./resolvers');
+const jwt = require('jsonwebtoken')
+
+const { ApolloServer } = require('apollo-server');
+const { buildFederatedSchema } = require('@apollo/federation');
 
 
-const log = debug('SEE-GAP:log');
-const errLog = debug('SEE-GAP:error');
+const getUser = token => {
+  try {
 
-const context = {
-	logger: {
-		log,
-		errLog,
-	},
-};
+    if (token) {
+      return jwt.verify(token, `${process.env.SECRET}`);
+    }
+    return null;
+
+  } catch (err) {
+    return null;
+  }
+
+}
 
 const schema = buildFederatedSchema([{ typeDefs, resolvers }]);
 
-const server = new ApolloServer({ schema, context });
+const server = new ApolloServer(
+	{ 	
+		schema, 
+		context: ({ req }) => {
+
+		   const tokenWithBearer = req.headers.authorization || '';
+		   const token = tokenWithBearer.split(' ')[1];
+		   const profe = getUser(token);
+
+		   return {
+		     profe,
+		   };
+
+		},
+	}
+);
 
 server.listen({ port: 4001 }).then(({ url }) => {
   console.log(`Server is ready at ${url}`);
