@@ -6,7 +6,7 @@ const typeDefs = gql`
     id: ID!
   }
   
-  type Profe implements Node {
+  type Profe {
 	  id: ID!
 	  nombre: String!
 	  apellidoPaterno: String!
@@ -15,7 +15,15 @@ const typeDefs = gql`
 	  password: String!
   }
   
-  extend type Query {
+  type GeneralResponse {
+  	
+  	profe: Profe
+  	message: String!
+  	error: Boolean!
+
+  }
+
+  type Query {
 
 	  profeById(id: Int!): Profe
   
@@ -23,7 +31,7 @@ const typeDefs = gql`
 
   type Mutation {
 
-	registrarProfe(nombre: String!, apellidoPaterno: String!, apellidoMaterno: String, email: String!, password: String!): Profe!
+	registerProfe(nombre: String!, apellidoPaterno: String!, apellidoMaterno: String, email: String!, password: String!): GeneralResponse!
 
   }
 

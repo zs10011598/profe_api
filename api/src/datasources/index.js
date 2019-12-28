@@ -18,7 +18,7 @@ ProfeDB
 const Profe = ProfeDB.define('profe', 
 	{
 		id: {
-			allowNull: false,
+			autoIncrement: true,
 			type: Sequelize.INTEGER,
 			primaryKey: true
 		},
@@ -47,6 +47,7 @@ const Profe = ProfeDB.define('profe',
 	}, 
 	{
 		freezeTableName: true,
+		timestamps: false,
 	}
 );
 
