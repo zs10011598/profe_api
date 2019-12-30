@@ -22,11 +22,19 @@ const resolvers = {
       
       if (!profe) {
         console.log('Not Authenticated');
-        throw new Error('Not Authenticated')
+        throw new Error('Not Authenticated');
       }
       return Profe.findOne({ where: { id: profe.id }});
 
     },
+
+    prueba: (parent, args, { profe }, context) => {
+
+      if (!profe) {                             // En esta linea se verifica el token
+        throw new Error('Not Authenticated');
+      }
+      return 'Hola';
+    }
   
   },
 

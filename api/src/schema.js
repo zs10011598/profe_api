@@ -33,6 +33,7 @@ const typeDefs = gql`
 
 	  profeById(id: Int!): Profe
 	  currentProfe: Profe!
+	  prueba: String!
   
   }
 
