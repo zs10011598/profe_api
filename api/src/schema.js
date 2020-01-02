@@ -39,8 +39,9 @@ const typeDefs = gql`
 
   type Mutation {
 
-	registerProfe(nombre: String!, apellidoPaterno: String!, apellidoMaterno: String, email: String!, password: String!): GeneralResponse!
-	login(email: String!, password: String!): LoginResponse!
+  	registerProfe(nombre: String!, apellidoPaterno: String!, apellidoMaterno: String, email: String!, password: String!): GeneralResponse!
+    verifyProfe(email: String!): GeneralResponse!
+  	login(email: String!, password: String!): LoginResponse!
 
   }
 

@@ -69,7 +69,9 @@ const resolvers = {
                                        apellidoPaterno: apellidoPaterno,
                                        apellidoMaterno: apellidoMaterno,
                                        email: email,
-                                       password: hashed_password});
+                                       password: hashed_password,
+                                       verificado: false
+                                     });
 
         return new_profe.save().then(profe => {
           
@@ -96,6 +98,39 @@ const resolvers = {
       }
 
  
+
+    },
+
+    verifyProfe: async (parent, { email }, context, info) => {
+
+      const profe = await Profe.findOne({
+        where: { email: email }
+      });      
+
+      verify_profe_response = {};
+
+      if (!profe) {
+        
+        message = 'No existe profe con ID ' + email;
+        console.log(message);
+        
+        verify_profe_response['profe'] = null;
+        verify_profe_response['error'] = true;
+        verify_profe_response['message'] = message;
+
+        return verify_profe_response;
+
+      }      
+
+      profe.update({
+        verificado: true
+      });
+
+      verify_profe_response['profe'] = profe;
+      verify_profe_response['error'] = false;
+      verify_profe_response['message'] = '';
+
+      return verify_profe_response;
 
     },
 

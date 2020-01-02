@@ -43,6 +43,10 @@ const Profe = ProfeDB.define('profe',
 		password: {
 			allowNull: false,
 			type: Sequelize.STRING	
+		},
+		verificado: {
+			allowNull: false,
+			type: Sequelize.BOOLEAN	
 		}	
 	}, 
 	{
