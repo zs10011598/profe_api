@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
-const { Profe } = require('./datasources/index.js');
+const { Profe, Login } = require('./datasources/index.js');
 
 
 const resolvers = {
@@ -162,7 +162,12 @@ const resolvers = {
             expiresIn: '1d',
           },
         );
+
+        const login = Login.build({
+          id_profe: profe.id,
+        });
         
+        login.save();
       }
 
       if (!password_match) {
