@@ -76,5 +76,23 @@ const Login = ProfeDB.define('login',
 	}
 );
 
+const Estado = ProfeDB.define('estado', 
+	{
+		id: {
+			autoIncrement: true,
+			type: Sequelize.INTEGER,
+			primaryKey: true
+		},
+		nombre: {
+			allowNull: false,
+			type: Sequelize.STRING	
+		},
+	}, {
+		freezeTableName: true,
+		timestamps: false,
+	}
+);
+
 module.exports.Profe = Profe;
 module.exports.Login = Login;
+module.exports.Estado = Estado;

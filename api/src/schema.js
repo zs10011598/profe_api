@@ -12,6 +12,13 @@ const typeDefs = gql`
 	  password: String!
   
   }
+
+  type Estado {
+
+    id: ID!
+    nombre: String!
+      
+  }
   
   type GeneralResponse {
   	
@@ -33,7 +40,8 @@ const typeDefs = gql`
 
 	  profeById(id: Int!): Profe
 	  currentProfe: Profe!
-	  prueba: String!
+    getStates: [Estado!]
+    prueba: String!
   
   }
 

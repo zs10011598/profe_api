@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
-const { Profe, Login } = require('./datasources/index.js');
+const { Profe, Login, Estado } = require('./datasources/index.js');
 
 
 const resolvers = {
@@ -25,6 +25,15 @@ const resolvers = {
         throw new Error('Not Authenticated');
       }
       return Profe.findOne({ where: { id: profe.id }});
+
+    },
+
+    getStates: (parent, args, { profe }, context) => {
+
+      if (!profe) {                             // En esta linea se verifica el token
+        throw new Error('Not Authenticated');
+      }
+      return Estado.findAll();
 
     },
 

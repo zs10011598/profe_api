@@ -43,4 +43,4 @@ CREATE TABLE localidad(
 						);
 
 CREATE INDEX idx_localidad_id ON localidad(id);
-CREATE INDEX idx_localidad_id_municipio ON localidad(id_municpio);
+CREATE INDEX idx_localidad_id_municipio ON localidad(id_municipio);
