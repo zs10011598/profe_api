@@ -18,3 +18,29 @@ CREATE TABLE login(
 				);
 
 CREATE INDEX idx_login_id_profe ON login(id_profe);
+
+CREATE TABLE estado(
+					id serial PRIMARY KEY,
+					nombre varchar(150)
+					);
+
+CREATE INDEX idx_estado_id ON estado(id);
+
+CREATE TABLE municipio(
+					id serial PRIMARY KEY,
+					nombre varchar(150),
+					id_estado integer 
+					);
+
+CREATE INDEX idx_municpio_id ON municipio(id);
+CREATE INDEX idx_municpio_id_estado ON municipio(id_estado);
+
+CREATE TABLE localidad(
+					id serial PRIMARY KEY,
+					nombre varchar(150),
+					cp varchar(10),
+					id_municipio integer 
+						);
+
+CREATE INDEX idx_localidad_id ON localidad(id);
+CREATE INDEX idx_localidad_id_municipio ON localidad(id_municpio);
