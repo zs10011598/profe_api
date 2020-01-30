@@ -58,7 +58,9 @@ CREATE TABLE escuela(
 					cp varchar(50),
 					id_estado integer REFERENCES estado(id),
 					id_municipio integer REFERENCES municipio(id),
-					id_localidad integer REFERENCES localidad(id)
+					id_localidad integer REFERENCES localidad(id),
+					fecha_registro timestamp DEFAULT CURRENT_TIMESTAMP,
+					fecha_actualizacion timestamp
 					);
 
 CREATE INDEX idx_escuela_id ON escuela(id);
@@ -70,7 +72,8 @@ CREATE INDEX idx_escuela_id_localidad ON escuela(id_localidad);
 CREATE TABLE rel_profe_escuela(
 								id serial,
 								id_profe integer REFERENCES profe(id),
-								id_escuela integer REFERENCES escuela(id)
+								id_escuela integer REFERENCES escuela(id),
+								fecha_registro timestamp DEFAULT CURRENT_TIMESTAMP
 							);
 
 CREATE INDEX idx_rel_profe_escuela_id_profe ON rel_profe_escuela(id_profe);
@@ -87,6 +90,8 @@ ALTER TABLE profe ADD COLUMN cp varchar(50);
 ALTER TABLE profe ADD COLUMN id_estado integer REFERENCES estado(id) DEFAULT null;
 ALTER TABLE profe ADD COLUMN id_municipio integer REFERENCES municipio(id) DEFAULT null;
 ALTER TABLE profe ADD COLUMN id_localidad integer REFERENCES localidad(id) DEFAULT null;
+ALTER TABLE profe ADD COLUMN fecha_registro timestamp DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE profe ADD COLUMN fecha_actualizacion timestamp;
 
 CREATE INDEX idx_profe_fecha_nacimiento ON profe(fecha_nacimiento);
 CREATE INDEX idx_profe_fecha_sexo ON profe(fecha_sexo);
@@ -94,3 +99,18 @@ CREATE INDEX idx_profe_fecha_cp ON profe(cp);
 CREATE INDEX idx_profe_id_estado ON profe(id_estado);
 CREATE INDEX idx_profe_id_municipio ON profe(id_municipio);
 CREATE INDEX idx_profe_id_localidad ON profe(id_localidad);
+
+CREATE TYPE grado AS ENUM ('1o', '2o', '3er', '4o', '5o', '6o');
+
+CREATE TABLE nivel(
+					id serial,
+					id_profe integer REFERENCES profe(id),
+					id_escuela integer REFERENCES escuela(id),
+					nivel grado,
+					fecha_registro timestamp DEFAULT CURRENT_TIMESTAMP,
+					fecha_actualizacion timestamp
+					);
+
+CREATE INDEX idx_nivel_id_profe ON nivel(id_profe);
+CREATE INDEX idx_nivel_id_escuela ON nivel(id_escuela);
+CREATE INDEX idx_nivel_nivel ON nivel(nivel);
