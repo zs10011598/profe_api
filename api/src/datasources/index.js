@@ -93,6 +93,28 @@ const Estado = ProfeDB.define('estado',
 	}
 );
 
+const Municipio = ProfeDB.define('municipio', 
+	{
+		id: {
+			autoIncrement: true,
+			type: Sequelize.INTEGER,
+			primaryKey: true
+		},
+		nombre: {
+			allowNull: false,
+			type: Sequelize.STRING	
+		},
+		id_estado: {
+			type: Sequelize.INTEGER,
+			allowNull: false,
+		},
+	}, {
+		freezeTableName: true,
+		timestamps: false,
+	}
+);
+
 module.exports.Profe = Profe;
 module.exports.Login = Login;
 module.exports.Estado = Estado;
+module.exports.Municipio = Municipio;

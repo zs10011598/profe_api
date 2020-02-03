@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
-const { Profe, Login, Estado } = require('./datasources/index.js');
+const { Profe, Login, Estado, Municipio } = require('./datasources/index.js');
 
 
 const resolvers = {
@@ -34,6 +34,18 @@ const resolvers = {
         throw new Error('Not Authenticated');
       }
       return Estado.findAll();
+
+    },
+
+    getMunicipalities: (parent, args, { profe }, context) => {
+
+      if (!profe) {                             // En esta linea se verifica el token
+        throw new Error('Not Authenticated');
+      }
+      return Municipio.findAll({
+        where: {id_estado: args['idEstado']},
+        attributes: ['id', 'nombre']
+      });
 
     },
 

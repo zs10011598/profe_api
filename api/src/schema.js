@@ -13,7 +13,7 @@ const typeDefs = gql`
   
   }
 
-  type Estado {
+  type Place {
 
     id: ID!
     nombre: String!
@@ -40,7 +40,8 @@ const typeDefs = gql`
 
 	  profeById(id: Int!): Profe
 	  currentProfe: Profe!
-    getStates: [Estado!]
+    getStates: [Place!]
+    getMunicipalities(idEstado: Int!): [Place!]
     prueba: String!
   
   }
