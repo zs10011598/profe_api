@@ -2,7 +2,8 @@ const Sequelize = require('sequelize');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
-const { Profe, Login, Estado } = require('./datasources/index.js');
+const { QueryTypes } = require('sequelize');
+const { Profe, Login, Estado, Municipio, Localidad, Escuela, ProfeDB } = require('./datasources/index.js');
 
 
 const resolvers = {
@@ -34,6 +35,86 @@ const resolvers = {
         throw new Error('Not Authenticated');
       }
       return Estado.findAll();
+
+    },
+
+    getMunicipalities: async (parent, args, { profe }, context) => {
+
+      if (!profe) {                             // En esta linea se verifica el token
+        throw new Error('Not Authenticated');
+      }
+      return Municipio.findAll({
+        where: {id_estado: args['idEstado']},
+        attributes: ['id', 'nombre']
+      });
+
+    },
+
+    getZipCodes: async (parent, args, { profe }, context) => {
+
+      if (!profe) {                             // En esta linea se verifica el token
+        throw new Error('Not Authenticated');
+      }
+      var aux = await Localidad.findAll({
+        where: {id_municipio: args['idMunicipio']},
+        attributes: ['cp']
+      });
+
+      var cp = []
+      var zc = []
+
+      aux.forEach(item  => {
+
+        cp.push(item.dataValues['cp'])
+
+      })
+
+      cp = Array.from(new Set(cp)) 
+      
+      cp.forEach(item => {
+
+        zc.push({id: item, nombre: item})
+
+      })
+
+
+
+      return zc
+
+    },
+
+    getHoods: async (parent, args, { profe }, context) => {
+
+      if (!profe) {                             // En esta linea se verifica el token
+        throw new Error('Not Authenticated');
+      }
+      return Localidad.findAll({
+        where: {cp: '' + args['zipCode']},
+        attributes: ['id', 'nombre']
+      });
+
+    },
+
+    getAssociatedEscuelas: async (parent, args, { profe }, context) => {
+
+      if (!profe) {                             // En esta linea se verifica el token
+        throw new Error('Not Authenticated');
+      }
+
+      var escuelas = []
+
+     
+      const id_profe = profe.id
+
+      const relations = await ProfeDB.query(`SELECT id_escuela FROM rel_profe_escuela WHERE id_profe=${id_profe}`, { type: QueryTypes.SELECT });
+
+      relations.forEach(item => {
+
+        escuelas.push(item['id_escuela'])
+
+      })
+
+      return Escuela.findAll({where: {id: escuelas}})
 
     },
 
@@ -143,6 +224,7 @@ const resolvers = {
 
     },
 
+
     login: async (parent, { email, password }, context, info) => {
       
       const profe = await Profe.findOne({
@@ -196,6 +278,65 @@ const resolvers = {
       };
 
     },
+
+
+    registerEscuela: async (parent, args, { profe }, context) => {
+
+      if (!profe) {                             // En esta linea se verifica el token
+        throw new Error('Not Authenticated');
+      }
+
+      var email = args['email']
+      var profe = await Profe.findOne({ where: { email: email }})
+      const id_profe = profe.id
+      
+      var resgister_response = {};
+      
+      const new_escuela = Escuela.build({
+
+        nombre: args['nombre'],
+        serviciosRegionales: args['serviciosRegionales'],
+        clave: args['clave'],
+        zona: args['zona'],
+        sector: args['sector'],
+        organismoPublico: args['organismoPublico'],
+        calleYNumero: args['calleYNumero'],
+        numeroInterior: args['numeroInterior'],
+        cp: args['cp'],
+        turno: args['turno'],
+        idEstado: args['idEstado'],
+        idMunicipio: args['idMunicipio'],
+        idLocalidad: args['idLocalidad'],
+        fechaActualizacion: args['fechaActualizacion']
+
+      })
+
+      return new_escuela.save().then(escuela => {
+          
+          message = 'Escuela registrada correctamente!'
+          resgister_response['error'] = false;
+          resgister_response['message'] = message;
+
+          const id_escuela = escuela.id
+
+
+          ProfeDB.query(`INSERT INTO rel_profe_escuela(id_profe, id_escuela) values(${id_profe}, ${id_escuela})`, { type: QueryTypes.SELECT });
+
+          return resgister_response;
+        
+        }).catch(error => {
+          
+          message = 'Ocurrio un error al insertar la escuela! ' + error
+
+          console.log(error);
+          resgister_response['error'] = true;
+          resgister_response['message'] = message;
+
+          return resgister_response;
+
+        });
+
+    }
 
   }
 

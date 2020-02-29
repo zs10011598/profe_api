@@ -114,3 +114,6 @@ CREATE TABLE nivel(
 CREATE INDEX idx_nivel_id_profe ON nivel(id_profe);
 CREATE INDEX idx_nivel_id_escuela ON nivel(id_escuela);
 CREATE INDEX idx_nivel_nivel ON nivel(nivel);
+
+ALTER TABLE escuela RENAME COLUMN colonia TO numero_interior;
+ALTER TABLE escuela ADD COLUMN turno integer DEFAULT 0;
