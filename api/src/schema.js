@@ -13,6 +13,27 @@ const typeDefs = gql`
   
   }
 
+  type School {
+
+    id: ID!
+    nombre: String!
+    serviciosRegionales: String
+    clave: String!
+    zona: String!
+    sector: String!
+    organismoPublico: String
+    calleYNumero: String
+    numeroInterior: String
+    colonia: String
+    cp: String
+    turno: Int!
+    idEstado: Int!
+    idMunicipio: Int!
+    idLocalidad: Int!
+    fechaActualizacion: String!
+
+  }
+
   type Place {
 
     id: ID!
@@ -25,6 +46,13 @@ const typeDefs = gql`
   	profe: Profe
   	message: String!
   	error: Boolean!
+
+  }
+
+  type Response {
+    
+    message: String!
+    error: Boolean!
 
   }
 
@@ -42,6 +70,9 @@ const typeDefs = gql`
 	  currentProfe: Profe!
     getStates: [Place!]
     getMunicipalities(idEstado: Int!): [Place!]
+    getZipCodes(idMunicipio: Int!): [Place!]
+    getHoods(zipCode: Int!): [Place!]
+    getAssociatedEscuelas: [School!]
     prueba: String!
   
   }
@@ -51,6 +82,7 @@ const typeDefs = gql`
   	registerProfe(nombre: String!, apellidoPaterno: String!, apellidoMaterno: String, email: String!, password: String!): GeneralResponse!
     verifyProfe(email: String!): GeneralResponse!
   	login(email: String!, password: String!): LoginResponse!
+    registerEscuela(nombre: String!, serviciosRegionales: String, clave: String!, zona: String!, sector: String!, turno: Int!, organismoPublico: String, calleYNumero: String, numeroInterior: String, cp: String, idEstado: Int!, idMunicipio: Int!, idLocalidad: Int!, fechaActualizacion: String!, email: String!): Response!
 
   }
 

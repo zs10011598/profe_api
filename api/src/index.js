@@ -1,6 +1,7 @@
 const typeDefs = require('./schema');
 const resolvers = require('./resolvers');
 const jwt = require('jsonwebtoken')
+const { QueryTypes } = require('sequelize');
 
 const { ApolloServer } = require('apollo-server');
 const { buildFederatedSchema } = require('@apollo/federation');
